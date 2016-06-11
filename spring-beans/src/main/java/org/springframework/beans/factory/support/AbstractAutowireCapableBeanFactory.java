@@ -448,9 +448,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (logger.isDebugEnabled()) {
 			logger.debug("Creating instance of bean '" + beanName + "'");
 		}
+		//锁定class，根据设置的class属性或者根据className来解解析class
 		// Make sure bean class is actually resolved at this point.
 		resolveBeanClass(mbd, beanName);
-
+		//验证及准备覆盖的方法
 		// Prepare method overrides.
 		try {
 			mbd.prepareMethodOverrides();
@@ -461,6 +462,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		try {
+			//给BeanPostProcessors一个机会来返回代理来替代真正的实例
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
 			Object bean = resolveBeforeInstantiation(beanName, mbd);
 			if (bean != null) {

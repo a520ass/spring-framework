@@ -136,54 +136,117 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 
 	private volatile Object beanClass;
-
+	/**
+	 * bean的作用范围，对应bean属性scope
+	 */
 	private String scope = SCOPE_DEFAULT;
-
+	/**
+	 * 是否是抽象。对应bean属性abstract
+	 */
 	private boolean abstractFlag = false;
-
+	/**
+	 * 是否延迟加载，对应bean属性lazy-init
+	 */
 	private boolean lazyInit = false;
-
+	/**
+	 * 自动注入模式，对应bean属性attire
+	 */
 	private int autowireMode = AUTOWIRE_NO;
-
+	/**
+	 * 依赖检查。spring3.0后弃用这个属性
+	 */
 	private int dependencyCheck = DEPENDENCY_CHECK_NONE;
-
+	/**
+	 * 用来表示一个bean的实例化依靠另一个bean先实例化，对应bean属性depend-on
+	 */
 	private String[] dependsOn;
-
+	/**
+	 * autowire-candidate属性为false。这样容器在查找自动装配对象时
+	 * 将不考虑该bean，即它不会被考虑作为其他bean自动装配的候选者。但是该bean本身还是可以使用自动装配来注入其他bean的
+	 */
 	private boolean autowireCandidate = true;
-
+	/**
+	 * 自动装配时当出现多个bean候选者时。将作为首选者，对应bean属性primary
+	 */
 	private boolean primary = false;
-
+	/**
+	 * 用于记录qualifier 对应子元素qualifier
+	 */
 	private final Map<String, AutowireCandidateQualifier> qualifiers =
 			new LinkedHashMap<String, AutowireCandidateQualifier>(0);
-
+	/**
+	 * 允许访问非公开的构造器和方法。程序设置
+	 */
 	private boolean nonPublicAccessAllowed = true;
-
+	/**
+	 * 是否以一种宽松的模式解析构造函数。默认为true，
+	 * 如果为false，则在如下情况
+	 * interface ITest{}
+	 * class ITestImpl implements ITest{};
+	 * class Main{
+	 * 		Main(ITest i){}
+	 * 		Main(ITestImpl i){}
+	 * }
+	 * 抛出异常，因为spring无法准确定位哪个构造函数
+	 * 程序设置
+	 */
 	private boolean lenientConstructorResolution = true;
-
+	/**
+	 * 记录构造函数注入属性，对应bean属性constructor-arg
+	 */
 	private ConstructorArgumentValues constructorArgumentValues;
-
+	/**
+	 * 普通属性集合
+	 */
 	private MutablePropertyValues propertyValues;
-
+	/**
+	 * 方法重写持有者。记录lookup-method 、replace-method元素
+	 */
 	private MethodOverrides methodOverrides = new MethodOverrides();
-
+	/**
+	 * 对应bean属性factory-bean属性。
+	 * <bean id="instanceFactoryBean" class="example.chapter3.InstanceFactoryBean"></bean>
+	 * <bean id="currentTime" factory-bean="instanceFactoryBean" factory-method="createTime"></bean>
+	 */
 	private String factoryBeanName;
-
+	/**
+	 * 对应bean属性factory-method属性。
+	 */
 	private String factoryMethodName;
-
+	/**
+	 * 初始化方法。对应bean属性init-method
+	 */
 	private String initMethodName;
-
+	/**
+	 * 销毁方法。对应bean属性destroy-method
+	 */
 	private String destroyMethodName;
-
+	/**
+	 * 是否执行init-method，程序设置
+	 */
 	private boolean enforceInitMethod = true;
-
+	/**
+	 * 是否执行destroy-method，程序设置
+	 */
 	private boolean enforceDestroyMethod = true;
-
+	/**
+	 * 是否是用户定义的而不是应用程序本身定义的，创建AOP时候为true，程序设置
+	 */
 	private boolean synthetic = false;
-
+	/**
+	 * 定义这个bean的应用。ROLE_APPLICATION：用户  
+	 * ROLE_SUPPORT：某些复杂配置的一部分
+	 * ROLE_INFRASTRUCTURE：完全内部使用。与用户无关
+	 * 程序设置
+	 */
 	private int role = BeanDefinition.ROLE_APPLICATION;
-
+	/**
+	 * bean的描述信息
+	 */
 	private String description;
-
+	/**
+	 * 这个bean定义的资源
+	 */
 	private Resource resource;
 
 
@@ -949,6 +1012,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * @throws BeanDefinitionValidationException in case of validation failure
 	 */
 	protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionValidationException {
+		//获取类中对应方法名的个数
 		int count = ClassUtils.getMethodCountForName(getBeanClass(), mo.getMethodName());
 		if (count == 0) {
 			throw new BeanDefinitionValidationException(
@@ -956,6 +1020,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 					"' on class [" + getBeanClassName() + "]");
 		}
 		else if (count == 1) {
+			//标记MethodOverride暂未被覆盖，避免参数类型检查的开销
 			// Mark override as not overloaded, to avoid the overhead of arg type checking.
 			mo.setOverloaded(false);
 		}

@@ -144,15 +144,17 @@ public class BeanDefinitionReaderUtils {
 	public static void registerBeanDefinition(
 			BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
 			throws BeanDefinitionStoreException {
-
+		//使用beanName做唯一标识注册
 		// Register bean definition under primary name.
 		String beanName = definitionHolder.getBeanName();
+		//使用org.springframework.beans.factory.support.DefaultListableBeanFactory实例来注册（BeanDefinitionRegistry是接口）
 		registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
-
+		//注册所有别名
 		// Register aliases for bean name, if any.
 		String[] aliases = definitionHolder.getAliases();
 		if (aliases != null) {
 			for (String aliase : aliases) {
+				//org.springframework.core.SimpleAliasRegistry
 				registry.registerAlias(beanName, aliase);
 			}
 		}
