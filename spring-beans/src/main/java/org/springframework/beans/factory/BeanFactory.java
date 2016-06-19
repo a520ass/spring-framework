@@ -105,12 +105,19 @@ import org.springframework.beans.BeansException;
  * @see org.springframework.beans.factory.support.RootBeanDefinition#getDestroyMethodName
  */
 public interface BeanFactory {
-
+	
 	/**
 	 * Used to dereference a {@link FactoryBean} instance and distinguish it from
 	 * beans <i>created</i> by the FactoryBean. For example, if the bean named
 	 * {@code myJndiObject} is a FactoryBean, getting {@code &myJndiObject}
 	 * will return the factory, not the instance returned by the factory.
+	 */
+	/**
+     * 转定义符"&" 用来引用实例，或把它和工厂产生的Bean区分开，就是说，如果一个FactoryBean的名字为a，那么，&a会得到那个Factory
+     * FactoryBean和BeanFactory 是在Spring中使用最为频繁的类，它们在拼写上很相似。一个是Factory，也就是Ioc容器或对象工厂；一个
+     * 是Bean。在Spring中，所有的Bean都是由BeanFactory（也就是Ioc容器）来进行管理的。但对FactoryBean而言，这个Bean不是简单的Be
+     * an，而是一个能产生或者修饰对象生成的工厂Bean，它的实现与设计模式中的工厂模式和修饰器模式类似。
+     *
 	 */
 	String FACTORY_BEAN_PREFIX = "&";
 
@@ -195,6 +202,11 @@ public interface BeanFactory {
 	 * @param name the name of the bean to query
 	 * @return whether a bean with the given name is present
 	 */
+	/**
+     * 让用户判断容器是否含有指定名字的Bean.
+     * @param name 搜索所用的Bean名
+     * @return boolean 是否包含其中
+     */
 	boolean containsBean(String name);
 
 	/**
