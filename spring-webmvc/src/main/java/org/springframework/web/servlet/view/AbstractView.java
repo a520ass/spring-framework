@@ -261,9 +261,11 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
 			logger.trace("Rendering view with name '" + this.beanName + "' with model " + model +
 				" and static attributes " + this.staticAttributes);
 		}
-
+		//将属性放入其中 
 		Map<String, Object> mergedModel = createMergedOutputModel(model, request, response);
 		prepareResponse(request, response);
+		//处理页面跳转（）
+		//org.springframework.web.servlet.view.InternalResourceView.renderMergedOutputModel(Map<String, Object>, HttpServletRequest, HttpServletResponse)
 		renderMergedOutputModel(mergedModel, request, response);
 	}
 
