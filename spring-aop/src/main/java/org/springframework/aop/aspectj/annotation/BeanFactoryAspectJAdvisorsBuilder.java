@@ -87,12 +87,16 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 			if (aspectNames == null) {
 				List<Advisor> advisors = new LinkedList<Advisor>();
 				aspectNames = new LinkedList<String>();
+				//获取所有的beanName
 				String[] beanNames =
 						BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.beanFactory, Object.class, true, false);
+				//循环所有的beanName找出对应的增强方法
 				for (String beanName : beanNames) {
+					//不合适的bean则略过。由于子类定义规则。默认返回true
 					if (!isEligibleBean(beanName)) {
 						continue;
 					}
+					//获取对应的bean的类型
 					// We must be careful not to instantiate beans eagerly as in this
 					// case they would be cached by the Spring container but would not
 					// have been weaved
@@ -100,12 +104,14 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 					if (beanType == null) {
 						continue;
 					}
+					//如果存在Aspect注解
 					if (this.advisorFactory.isAspect(beanType)) {
 						aspectNames.add(beanName);
 						AspectMetadata amd = new AspectMetadata(beanType, beanName);
 						if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 							MetadataAwareAspectInstanceFactory factory =
 									new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+							//解析标记AspectJ注解中的增强方法org.springframework.aop.aspectj.annotation.ReflectiveAspectJAdvisorFactory.getAdvisors(MetadataAwareAspectInstanceFactory)
 							List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 							if (this.beanFactory.isSingleton(beanName)) {
 								this.advisorsCache.put(beanName, classAdvisors);
@@ -136,6 +142,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 		if (aspectNames.isEmpty()) {
 			return Collections.emptyList();
 		}
+		//记录在缓存中
 		List<Advisor> advisors = new LinkedList<Advisor>();
 		for (String aspectName : aspectNames) {
 			List<Advisor> cachedAdvisors = this.advisorsCache.get(aspectName);
